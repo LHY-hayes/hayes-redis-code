@@ -1,0 +1,76 @@
+spring:
+  profiles:
+    active: test
+
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root:
+      info
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.hayes.bash.hayesredis.mapper
+
+
+YXT.REDIS.SECRET : fad76fdd2143b494d580d2431cba1fff
+
+YYT.REDIS.SECRET : 2ff6e6e537668300422af8ccfcd50cf0
+
+
+---
+spring:
+  application:
+    name: test-service
+  profiles: test
+
+  ### oracle配置信息
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
+    username: root
+    password: 123456
+
+  redis:
+    cluster:
+      nodes: 127.0.0.1:6379,127.0.0.1:6380
+    password:
+    timeout: 6000ms
+    database: 0
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1s
+        max-idle: 8
+        min-idle: 0
+
+
+
+---
+spring:
+  application:
+    name: prod-service
+  profiles: prod
+
+  ### oracle配置信息
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@//1.1.1.1:1521/orcl
+    username: root
+    password: prod-pwd.wrong
+
+  redis:
+    cluster:
+      nodes: 1.1.1.1:6379,1.1.1.1:6380
+    password: prod-pwd.wrong
+    timeout: 6000ms
+    database: 0
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1s
+        max-idle: 8
+        min-idle: 0
+
+

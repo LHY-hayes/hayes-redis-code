@@ -1,0 +1,26 @@
+###
+POST http://localhost:8080/acceptBusiness/getNumberForOrderList
+Content-Type: application/json
+
+{
+  "sourceSite": "YXT",
+  "gradeId": "",
+  "generationType": "",
+  "cityNumber": "8110100",
+  "pageSize": "10",
+  "priceStart": "100",
+  "priceEnd": "500",
+  "baseType": "",
+  "token": "b4f4c7169097d25bde5f29f87d629855",
+  "phoneNumber": "",
+  "appType": "ios",
+  "segment": "1700000",
+  "ruleType": "0002",
+  "ctPage": "1",
+  "provinceNumber": "8110000"
+}
+
+
+### refreshAllData
+POST http://localhost:8080/acceptBusiness/refreshAllData
+

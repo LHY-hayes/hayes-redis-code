@@ -1,0 +1,98 @@
+###
+POST http://localhost:8080/redis/flushAll
+
+
+### put数据
+POST http://localhost:8080/redis/hash/put
+Content-Type: application/json
+
+{
+  "result": {
+    "phoneNumberList": [
+      {
+        "prepare": "10000",
+        "gradeId": "CRM-2",
+        "updateDate": "2019-10-28 00:00:00 ",
+        "cityNumber": "8110100",
+        "generationType": "4G",
+        "rule": "000000",
+        "employeeId": "100",
+        "storeId": "202007171522581543",
+        "baseType": "CTCC",
+        "iccid": "202007251539100000",
+        "phoneNumber": "17000000000",
+        "cityName": "北京市",
+        "price": "0",
+        "segment": "1700000",
+        "provinceNumber": "8110000",
+        "provinceName": "北京市",
+        "state": "A",
+        "excreditValue": "0",
+        "createDate": "2020-05-29 00:00:00 "
+      },
+      {
+        "prepare": "200",
+        "gradeId": "CRM-5",
+        "updateDate": "2019-12-01 00:00:00 ",
+        "cityNumber": "8110100",
+        "generationType": "4G",
+        "rule": "0001",
+        "employeeId": "system",
+        "storeId": "202007171522581543",
+        "baseType": "CTCC",
+        "phoneNumber": "17000000001",
+        "cityName": "北京市",
+        "price": "0",
+        "segment": "1700000",
+        "provinceNumber": "8110000",
+        "provinceName": "北京市",
+        "state": "A",
+        "excreditValue": "0",
+        "createDate": "2020-05-29 00:00:00 "
+      }
+    ]
+  },
+  "resultCode": "200",
+  "resultMsg": "success"
+}
+
+
+###
+POST http://localhost:8080/redis/set/put
+Content-Type: application/json
+
+{
+  "key": "AAAA",
+  "phoneNumber": "17000814444"
+}
+
+
+### =========================================================
+### get数据
+POST http://localhost:8080/redis/hash/get
+Content-Type: application/json
+
+{
+  "key": "17000000738"
+}
+
+### get数据
+POST http://localhost:8080/redis/set/get
+Content-Type: application/json
+
+{
+  "key": "AAAA"
+}
+
+
+### get数据
+POST http://localhost:8080/redis/set/setIntersect
+Content-Type: application/json
+
+{
+  "rules": [
+    "A",
+    "B",
+    "C"
+  ]
+}

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hayes.bash.hayesredis.mapper.PhoneNumberForOrderMapper">
+    <resultMap type="com.hayes.bash.hayesredis.entity.PhoneNumberInfo" id="PhoneNumberInfo">
+        <result column="phone_number" property="phoneNumber"></result>
+        <result column="base_type" property="baseType"></result>
+        <result column="province_number" property="provinceNumber"></result>
+        <result column="city_number" property="cityNumber"></result>
+        <result column="state" property="state"></result>
+        <result column="generation_type" property="generationType"></result>
+        <result column="create_date" property="createDate"></result>
+        <result column="update_date" property="updateDate"></result>
+        <result column="segment" property="segment"></result>
+        <result column="grade_id" property="gradeId"></result>
+        <result column="remark" property="remark"></result>
+        <result column="rule" property="rule"></result>
+        <result column="store_id" property="storeId"></result>
+        <result column="employee_id" property="employeeId"></result>
+        <result column="iccid" property="iccid"></result>
+        <result column="price" property="price"></result>
+        <result column="min_consume" property="minConsume"></result>
+        <result column="prepare" property="prepare"></result>
+        <result column="hold_time" property="holdTime"></result>
+        <result column="province_name" property="provincename"></result>
+        <result column="city_name" property="cityname"></result>
+        <result column="store_name" property="name"></result>
+        <result column="dept_name" property="deptname"></result>
+        <result column="prepayflag" property="prepayflag"></result>
+        <result column="prepay" property="prepay"></result>
+        <result column="endDuration" property="endDuration"></result>
+        <result column="usedDuration" property="usedDuration"></result>
+        <result column="pre_duration" property="preDuration"></result>
+    </resultMap>
+
+    <select id="getyytPhoneNumberInfoList" resultMap="PhoneNumberInfo">
+        select t.phone_number,t.base_type,t.province_number,t.city_number,
+        (select a.name from area_info a where a.id=t.province_number and a.state='A') province_name,
+        (select a.name from area_info a where a.id=t.city_number and a.state='A') city_name,
+        t.state,t.generation_type,
+        to_char(t.create_date, 'yyyy-mm-dd hh24:mi:ss') create_date,
+        to_char(t.update_date, 'yyyy-mm-dd hh24:mi:ss') update_date,
+        t.segment,t.grade_id,t.remark,t.rule,t.store_id,t.employee_id,t.iccid,
+        t2.min_consume/100 min_consume,t2.prepare/100 prepare,t2.price/100 price,t2.min_time
+        ,to_char(t2.prepay/100,'fm999999999999999999990.0099') as prepay,t2.pre_duration
+        from phone_number_info t,phone_number_grade_info t2
+        where  t.grade_id=t2.id and t2.state='A'
+        and (t.state='A' OR ( t.state='C' and t.employee_id=#{employeeId} ))
+        <if test="phoneNumber !=null and phoneNumber !='' and phoneNumber !='null'">
+            <!-- and (t.phone_number = #{phoneNumber,jdbcType=VARCHAR}  or substr(t.phone_number,8) = #{phoneNumber,jdbcType=VARCHAR}) -->
+            and (t.phone_number = #{phoneNumber,jdbcType=VARCHAR}  or t.phone_number like  '%'||#{phoneNumber,jdbcType=VARCHAR} )
+        </if>
+        <if test='ruleType == "AAA" 	or  ruleType == "AAAA" 	or  ruleType == "ABAB" 	or
+				  ruleType == "ABCD"  	or  ruleType == "520" 	or
+				  ruleType == "1314" 	or  ruleType == "4" 	or  ruleType == "AAA6" 	or
+				  ruleType == "AAAB" 	or  ruleType == "ABBA" 	or  ruleType == "no4"  '>
+            and t.rule = #{ruleType,jdbcType=VARCHAR}
+        </if>
+        <if test="ruleGetType == 'LIKE'">
+            and t.phone_number like concat('%',#{ruleType,jdbcType=VARCHAR} )
+        </if>
+        <if test="ruleGetType == 'YEAR'">
+            and t.phone_number like concat(concat('%',#{ruleType,jdbcType=VARCHAR}),'_')
+        </if>
+
+        <if test="priceStart !=null and priceStart !='' ">
+            and to_number(t2.price) &gt;= #{priceStart,jdbcType=INTEGER}
+        </if>
+        <if test="priceEnd !=null and priceEnd !='' ">
+            and to_number(t2.price) &lt;= #{priceEnd,jdbcType=INTEGER}
+        </if>
+        <if test="storeId !=null and storeId !='' and storeId !='null'">
+            and t.store_id = #{storeId,jdbcType=VARCHAR}
+        </if>
+        <if test="provinceNumber !=null and provinceNumber !='' and provinceNumber !='null'">
+            and t.province_number = #{provinceNumber,jdbcType=VARCHAR}
+        </if>
+        <if test="cityNumber !=null and cityNumber !='' and cityNumber !='null'">
+            and t.city_number = #{cityNumber,jdbcType=VARCHAR}
+        </if>
+        <if test="generationType !=null and generationType !='' and generationType !='null'">
+            and t.generation_type = #{generationType,jdbcType=VARCHAR}
+        </if>
+        <if test="segment !=null and segment !='' and segment !='null'">
+            and t.segment = #{segment,jdbcType=VARCHAR}
+        </if>
+        <if test="baseType !=null and baseType !='' and baseType !='null'">
+            and t.base_type = #{baseType,jdbcType=VARCHAR}
+        </if>
+        <if test="gradeId !=null and gradeId !='' and gradeId !='null'">
+            and t.grade_id = #{gradeId,jdbcType=VARCHAR}
+        </if>
+        and (EXISTS
+        (select r1.* from department_store_depend r1,department_employee_depend r2,employee_area_depend r3
+        where r1.store_id=t.store_id and r1.department_id=r2.department_id and r2.employee_id=#{employeeId}
+        and t.city_number=r3.city_number and r3.emp_id=r2.employee_id
+        and r1.state='A' and r2.state='A' and r3.state='A' and exists(select c1.id from resource_store c1 where c1.isshare='0' and c1.id=r1.store_id and c1.state='A'))
+        OR EXISTS
+        (select r4.* from employee_area_depend r3,RESOURCE_STORE r4
+        where r4.id=t.store_id and r4.ISSHARE='0' and r3.state='A' and r4.state='A'
+        <if test="1==2">
+           and r3.emp_id=#{employeeId}
+        </if>
+        and (r3.city_number='ALL' or  r3.city_number=t.city_number)))
+        order by t.phone_number asc
+    </select>
+
+
+</mapper>
